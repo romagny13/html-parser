@@ -78,15 +78,14 @@ function findEndNode(html: string, tagName: string, globalIndex: number): any {
                 else {
                     // return node
                     let matchText = match[0];
-                    let infos = {
-                        index: globalIndex + match.index,
-                        end: globalIndex + match.index + matchText.length
-                    };
                     let node = {
                         type: "close",
                         match: matchText,
                         name: tagName,
-                        infos
+                        infos: {
+                            index: globalIndex + match.index,
+                            end: globalIndex + match.index + matchText.length
+                        }
                     };
                     return node;
                 }
@@ -113,8 +112,6 @@ function findNextNode(html: string, parent: any, next?: Function): void {
         if (node) {
             if (node.type === "token") {
                 parent.children.push(node);
-                // html from the end of matched open node
-                // let rightHtml = html.substring(node.infos.end);
                 let endNode = findEndNode(toParse, node.name, globalIndex);
                 if (endNode) {
                     // end of open node... to start of close node
@@ -138,7 +135,7 @@ function findNextNode(html: string, parent: any, next?: Function): void {
                     }
                 }
                 else {
-                    // node without end token(<meta > for example)
+                    // node without end token (<meta> for example)
                     globalIndex = node.infos.end;
                     moveNext();
                 }
