@@ -33,17 +33,12 @@ console.log(nodes);
 ```html
 <script src="/node_modules/romagny13-html-parser/html-parser.js"></script>
 <script>
-       var html = `<!-- a comment -->
-                    <section>
-                        <h1>A title</h1>
-                        <p>A <strong>content</strong> with a <a href="#">Link</a></p>
-                    </section>
-                    <p>Other content</p>`;
-        var nodes = HTMLParser.parse(html);
-        console.log(nodes);
+    var html = '<!-- a comment --><section><h1>A title</h1><p>A <strong>content</strong> with a <a href="#">Link</a></p></section><p>Other content</p>';
+    var nodes = HTMLParser.parse(html);
+    console.log(nodes);
 
-        // link infos
-        let infos = nodes[1].children[1].children[1].infos;
-        console.log(html.substring(infos.index, infos.end)); // show "<a href="#">Link</a>"
+    // link infos
+    var infos = nodes[1].children[1].children[1].infos;
+    console.log(html.substring(infos.index, infos.end)); // show "<a href="#">Link</a>"
 </script>
 ```
