@@ -1,5 +1,7 @@
 # TypeScript/JavaScript HTML Parser
 
+[![Build Status](https://travis-ci.org/romagny13/html-parser.svg?branch=master)](https://travis-ci.org/romagny13/html-parser)
+
 <strong>HTML tree</strong> to  <strong>Object tree</strong>.
 
 ## Installation
