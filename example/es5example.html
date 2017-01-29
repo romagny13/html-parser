@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+</head>
+
+<body>
+    <div id="app">
+        <!-- a comment -->
+        <section>
+            <h1>A title</h1>
+            <p>A <strong>content</strong> with a <a href="#">Link</a></p>
+        </section>
+        <p>Other content</p>
+    </div>
+
+    <script src="/dist/html-parser.js"></script>
+    <script>
+
+        var html = document.getElementById("app").innerHTML;
+        var nodes = HTMLParser.parse(html);
+        console.log(nodes);
+
+        // link infos
+        let infos = nodes[1].children[1].children[1].infos;
+        console.log(html.substring(infos.index, infos.end));
+
+    </script>
+</body>
+
+</html>
