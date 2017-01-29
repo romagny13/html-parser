@@ -11,7 +11,7 @@ npm i romagny13-html-parser -S
 ### TypeScript / es6
 
 ```js
-import { parse } from "html-parser";
+import { parse } from "romagny13-html-parser";
 
 let html = `<!-- a comment -->
                     <section>

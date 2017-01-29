@@ -1,8 +1,8 @@
 {
     "name": "romagny13-html-parser",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "TypeScript/JavaScript HTML parser",
-    "main": "dist/sparouter.js",
+    "main": "dist/html-parser.js",
     "typings": "types/index.d.ts",
     "files": [
         "dist/html-parser.js",

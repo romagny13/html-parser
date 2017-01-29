@@ -16,6 +16,6 @@ interface HTMLParserStatic {
 
 declare var HTMLParser: HTMLParserStatic;
 
-declare module "html-parser" {
+declare module "romagny13-html-parser" {
     export = HTMLParser;
 }
