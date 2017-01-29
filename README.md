@@ -27,7 +27,7 @@ console.log(nodes);
 ### es5
 
 ```html
-<script src="/node_modules/html-parser/html-parser.js"></script>
+<script src="/node_modules/romagny13-html-parser/html-parser.js"></script>
 <script>
        var html = `<!-- a comment -->
                     <section>
