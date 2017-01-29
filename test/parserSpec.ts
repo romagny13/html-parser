@@ -11,8 +11,10 @@ describe("Test", () => {
 
     it("Should get attrs", () => {
         let attrs = getAttrs("attr1=\"value1\" attr2=\"value2\"");
-        assert.equal(attrs["attr1"], "value1");
-        assert.equal(attrs["attr2"], "value2");
+        assert.equal(attrs[0].name, "attr1");
+        assert.equal(attrs[0].value, "value1");
+        assert.equal(attrs[1].name, "attr2");
+        assert.equal(attrs[1].value, "value2");
     });
 
     it("Should find start node", () => {
@@ -33,9 +35,9 @@ describe("Test", () => {
 
     it("Should find end node", () => {
         // should find </p> after "with !"
-        let p = findEndNode(`A <p>content</p> with !</p>`, "p", 0);
-        assert.equal(p.infos.index, 23);
-        assert.equal(p.infos.end, 27);
+        let p = findEndNode(`<p>A <p>content</p> with !</p>`, "p", 0);
+        assert.equal(p.infos.index, 26);
+        assert.equal(p.infos.end, 30);
         assert.equal(p.match, "</p>");
         assert.equal(p.name, "p");
     });

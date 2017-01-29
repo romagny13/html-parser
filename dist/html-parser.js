@@ -1,5 +1,5 @@
 /*!
- * HTML Parser v0.1.0
+ * HTML Parser v0.1.1
  * (c) 2017 romagny13
  * Released under the MIT License.
  */
@@ -10,11 +10,33 @@
 }(this, (function () { 'use strict';
 
 var globalIndex = 0;
+function getAttr(value) {
+    var match = /([a-zA-Z0-9_\-@:]+)=(?:\"([^"]*)\")?/.exec(value);
+    if (match) {
+        return {
+            name: match[1],
+            value: match[2]
+        };
+    }
+}
+function getAttrs(value) {
+    var attrs = [];
+    var matches = value.match(new RegExp("([a-zA-Z0-9_\\-\\@\\:]+=(?:\"[^\"]*\")?)", "g"));
+    if (matches) {
+        for (var i = 0; i < matches.length; i++) {
+            var attr = getAttr(matches[i]);
+            if (attr) {
+                attrs.push(attr);
+            }
+        }
+    }
+    return attrs;
+}
 function isComment(tokenString) {
     return tokenString.indexOf("<!--") === 0;
 }
 function findStartNodeOrComment(html, globalIndex) {
-    var match = /<(\w+)\s*([^>]*)>|<!--(?:.|[\r\n])*-->/.exec(html);
+    var match = /<(\w+)\s*([^>]*)>|<!--(?:[^-->]|[\r\n])*-->/.exec(html);
     if (match) {
         var matchText = match[0];
         var infos = {
@@ -34,6 +56,7 @@ function findStartNodeOrComment(html, globalIndex) {
                 type: "token",
                 match: matchText,
                 name: match[1],
+                attrs: getAttrs(match[2]),
                 children: [],
                 innerHTML: "",
                 infos: infos
@@ -42,44 +65,43 @@ function findStartNodeOrComment(html, globalIndex) {
     }
 }
 function findEndNode(html, tagName, globalIndex) {
-    /*
-    --> "right html": example for "<div>content</content>" --> html  received is "content</div>"
-    Example: "A content<p> with</p>a paragraph </p>"
-    1. find first occurrence of </tag> (A content<p> with</p> <== )
-    2. check if html between start and index of match end node have a tag with this name opened (A content<p> with)
-    -> if have a token, move to the end of match end node (a paragraph </p>)
-    -> else return this end node with infos (global index and global end), global index is 0 for example
-    */
-    var closeRE = new RegExp("<\/" + tagName + ">");
-    var openRE = new RegExp("<" + tagName + "\\s*(?:[^>]*)>");
-    function moveNext(lastIndex) {
-        // find </tag>
-        var rightHtml = html.substring(lastIndex);
-        var match = closeRE.exec(rightHtml);
+    var level = 0;
+    // find token (open or close) of this name
+    var regex = new RegExp("<\/" + tagName + ">|<" + tagName + "\\s*(?:[^>]*)>", "g");
+    function moveNext() {
+        var match = regex.exec(html);
         if (match) {
-            // check if no <tag> between start search and </tag>
-            var leftHtmlSearch = rightHtml.substring(0, match.index);
-            if (openRE.exec(leftHtmlSearch)) {
-                var end = match.index + match[0].length;
-                return moveNext(lastIndex + end);
+            if (!isCloseToken(match[0])) {
+                level++;
+                return moveNext();
             }
             else {
-                var matchText = match[0];
-                var infos = {
-                    index: globalIndex + lastIndex + match.index,
-                    end: globalIndex + lastIndex + match.index + matchText.length
-                };
-                var node = {
-                    type: "close",
-                    match: matchText,
-                    name: tagName,
-                    infos: infos
-                };
-                return node;
+                level--;
+                if (level > 0) {
+                    return moveNext();
+                }
+                else {
+                    // return node
+                    var matchText = match[0];
+                    var infos = {
+                        index: globalIndex + match.index,
+                        end: globalIndex + match.index + matchText.length
+                    };
+                    var node = {
+                        type: "close",
+                        match: matchText,
+                        name: tagName,
+                        infos: infos
+                    };
+                    return node;
+                }
             }
         }
     }
-    return moveNext(0);
+    return moveNext();
+}
+function isCloseToken(value) {
+    return value.indexOf("</") === 0;
 }
 function hasToken(value) {
     return /<\/\w+>/.test(value);
@@ -93,8 +115,8 @@ function findNextNode(html, parent, next) {
             if (node.type === "token") {
                 parent.children.push(node);
                 // html from the end of matched open node
-                var rightHtml = html.substring(node.infos.end);
-                var endNode_1 = findEndNode(rightHtml, node.name, node.infos.end);
+                // let rightHtml = html.substring(node.infos.end);
+                var endNode_1 = findEndNode(toParse, node.name, globalIndex);
                 if (endNode_1) {
                     // end of open node... to start of close node
                     var innerHTML = html.substring(node.infos.end, endNode_1.infos.index);
@@ -115,6 +137,11 @@ function findNextNode(html, parent, next) {
                         globalIndex = endNode_1.infos.end;
                         moveNext();
                     }
+                }
+                else {
+                    // node without end token(<meta > for example)
+                    globalIndex = node.infos.end;
+                    moveNext();
                 }
             }
             else if (node.type === "comment") {
