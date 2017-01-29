@@ -1,5 +1,5 @@
 {
-    "name": "html-parser",
+    "name": "romagny13-html-parser",
     "version": "0.1.0",
     "description": "TypeScript/JavaScript HTML parser",
     "main": "dist/sparouter.js",

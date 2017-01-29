@@ -3,7 +3,7 @@
 ## Installation
 
 ```
-npm i htmlparser -S
+npm i romagny13-html-parser -S
 ```
 
 ## Usage
