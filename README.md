@@ -1,6 +1,6 @@
 # TypeScript/JavaScript HTML Parser
 
-<strong>HTML tree</strong> to  <strong>Object tree</strong>
+<strong>HTML tree</strong> to  <strong>Object tree</strong>.
 
 ## Installation
 
