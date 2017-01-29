@@ -29,7 +29,7 @@ console.log(nodes);
 ```html
 <script src="/node_modules/html-parser/html-parser.js"></script>
 <script>
-       let html = `<!-- a comment -->
+       var html = `<!-- a comment -->
                     <section>
                         <h1>A title</h1>
                         <p>A <strong>content</strong> with a <a href="#">Link</a></p>
@@ -40,6 +40,6 @@ console.log(nodes);
 
         // link infos
         let infos = nodes[1].children[1].children[1].infos;
-        console.log(html.substring(infos.index, infos.end));
+        console.log(html.substring(infos.index, infos.end)); // show "<a href="#">Link</a>"
 </script>
 ```
