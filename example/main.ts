@@ -14,6 +14,6 @@ let nodes = parse(html);
 console.log(nodes);
 
 
-let infos = nodes[0].children[0].infos;
-console.log(html.substring(infos.index, infos.end));
+/*let infos = nodes[1].children[0].infos;
+console.log(html.substring(infos.index, infos.end));*/
 
