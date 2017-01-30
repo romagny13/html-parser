@@ -9,6 +9,21 @@ describe("Test", () => {
         assert.equal(attr.value, "value1");
     });
 
+    it("Should get @ prefix", () => {
+        let attr = getAttr("@attr1=\"value1\"");
+        assert.equal(attr.prefix, "@");
+        assert.equal(attr.name, "attr1");
+        assert.equal(attr.value, "value1");
+    });
+
+    it("Should get : prefix", () => {
+        let attr = getAttr("myprefix:attr1=\"value1\"");
+        assert.equal(attr.prefix, "myprefix:");
+        assert.equal(attr.name, "attr1");
+        assert.equal(attr.value, "value1");
+    });
+
+
     it("Should get attrs", () => {
         let attrs = getAttrs("attr1=\"value1\" attr2=\"value2\"");
         assert.equal(attrs[0].name, "attr1");

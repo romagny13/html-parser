@@ -1,18 +1,21 @@
 let globalIndex = 0;
+let attrRE = /(\w*(?::|@))?([a-zA-Z0-9_\-]+)(?:=\"([^"]*)\")?/;
+let openRE = /<(\w+)\s*([^>]*)>|<!--(?:[^-->]|[\r\n])*-->/;
 
 function getAttr(value: string): any {
-    let match = /([a-zA-Z0-9_\-@:]+)=(?:\"([^"]*)\")?/.exec(value);
+    let match = attrRE.exec(value);
     if (match) {
         return {
-            name: match[1],
-            value: match[2]
+            prefix: match[1],
+            name: match[2],
+            value: match[3]
         };
     }
 }
 
 function getAttrs(value: string): any {
     let attrs = [];
-    let matches = value.match(new RegExp("([a-zA-Z0-9_\\-\\@\\:]+=(?:\"[^\"]*\")?)", "g"));
+    let matches = value.match(new RegExp(attrRE.source, "g"));
     if (matches) {
         for (let i = 0; i < matches.length; i++) {
             let attr = getAttr(matches[i]);
@@ -29,7 +32,7 @@ function isComment(tokenString: string): boolean {
 }
 
 function findStartNodeOrComment(html: string, globalIndex: number): any {
-    let match = /<(\w+)\s*([^>]*)>|<!--(?:[^-->]|[\r\n])*-->/.exec(html);
+    let match = openRE.exec(html);
     if (match) {
         let matchText = match[0];
         let infos = {
@@ -78,7 +81,7 @@ function findEndNode(html: string, tagName: string, globalIndex: number): any {
                 else {
                     // return node
                     let matchText = match[0];
-                    let node = {
+                    return {
                         type: "close",
                         match: matchText,
                         name: tagName,
@@ -87,7 +90,6 @@ function findEndNode(html: string, tagName: string, globalIndex: number): any {
                             end: globalIndex + match.index + matchText.length
                         }
                     };
-                    return node;
                 }
             }
         }
@@ -162,6 +164,5 @@ function parse(html: string): Array<any> {
     findNextNode(html, node);
     return node.children;
 }
-
 
 export { getAttr, getAttrs, findStartNodeOrComment, findEndNode, parse };

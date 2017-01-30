@@ -1,5 +1,5 @@
 /*!
- * HTML Parser v0.1.1
+ * HTML Parser v0.1.3
  * (c) 2017 romagny13
  * Released under the MIT License.
  */
@@ -10,18 +10,21 @@
 }(this, (function () { 'use strict';
 
 var globalIndex = 0;
+var attrRE = /(\w*(?::|@))?([a-zA-Z0-9_\-]+)(?:=\"([^"]*)\")?/;
+var openRE = /<(\w+)\s*([^>]*)>|<!--(?:[^-->]|[\r\n])*-->/;
 function getAttr(value) {
-    var match = /([a-zA-Z0-9_\-@:]+)=(?:\"([^"]*)\")?/.exec(value);
+    var match = attrRE.exec(value);
     if (match) {
         return {
-            name: match[1],
-            value: match[2]
+            prefix: match[1],
+            name: match[2],
+            value: match[3]
         };
     }
 }
 function getAttrs(value) {
     var attrs = [];
-    var matches = value.match(new RegExp("([a-zA-Z0-9_\\-\\@\\:]+=(?:\"[^\"]*\")?)", "g"));
+    var matches = value.match(new RegExp(attrRE.source, "g"));
     if (matches) {
         for (var i = 0; i < matches.length; i++) {
             var attr = getAttr(matches[i]);
@@ -36,7 +39,7 @@ function isComment(tokenString) {
     return tokenString.indexOf("<!--") === 0;
 }
 function findStartNodeOrComment(html, globalIndex) {
-    var match = /<(\w+)\s*([^>]*)>|<!--(?:[^-->]|[\r\n])*-->/.exec(html);
+    var match = openRE.exec(html);
     if (match) {
         var matchText = match[0];
         var infos = {
@@ -83,7 +86,7 @@ function findEndNode(html, tagName, globalIndex) {
                 else {
                     // return node
                     var matchText = match[0];
-                    var node = {
+                    return {
                         type: "close",
                         match: matchText,
                         name: tagName,
@@ -92,7 +95,6 @@ function findEndNode(html, tagName, globalIndex) {
                             end: globalIndex + match.index + matchText.length
                         }
                     };
-                    return node;
                 }
             }
         }
